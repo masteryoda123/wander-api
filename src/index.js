@@ -8,34 +8,34 @@ import cookieSession from 'cookie-session'
 
 import routes from './routes'
 
-const app = express()
-const portNum = process.env.PORT || 8000
+const app = express();
+const portNum = process.env.PORT || 8000;
 
 
 
 // body parser
-app.use(bodyParser.json())
-app.use(bodyParser.urlencoded({ extended: false }))
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
 
 // cookie parser
-app.use(cookieParser())
+app.use(cookieParser());
 
 // TODO: Session timeout
 app.use(session({
   secret: 'secret',
   saveUnitialized: true,
   resave: true
-}))
+}));
 
 // PASSPORT
-app.use(passport.initialize())
-app.use(passport.session())
+app.use(passport.initialize());
+app.use(passport.session());
 
 
 // Views
-app.use('/static', express.static(`${__dirname}/../static`))
-app.set('views', `${__dirname}/../static/html`)
-app.set('view engine', 'ejs')
+app.use('/static', express.static(`${__dirname}/../static`));
+app.set('views', `${__dirname}/../static/html`);
+app.set('view engine', 'ejs');
 
 
 
@@ -45,23 +45,23 @@ app.set('view engine', 'ejs')
 passport.use(new LocalStrategy((username, password, done) => {
   models.User.findOne({ where: { username } }).then((user) => {
     if (!user) {
-      return done(null, false, {message: 'User not found!'})
+      return done(null, false, {message: 'User not found!'});
     }
 
     if (!user.verifyPassword(password)) {
-      return done(null, false, { message: 'Invalid password!' })
+      return done(null, false, { message: 'Invalid password!' });
     }
 
-    return done(null, user)
+    return done(null, user);
   }).catch((err) => {
-    throw err
+    throw err;
   })
 
-}))
+}));
 
 passport.serializeUser((user, done) => {
   done(null, user.id)
-})
+});
 
 passport.deserializeUser((id, done) => {
   models.User.findById(id).then((user) => {
@@ -69,7 +69,7 @@ passport.deserializeUser((id, done) => {
   }).catch((err) => {
     done(err, null)
   })
-})
+});
 
 
 
@@ -86,4 +86,4 @@ app.listen(portNum, () => {
   if (!process.env.PORT) {
     console.log(`Serving port number ${portNum}`)
   }
-})
+});
